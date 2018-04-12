@@ -1,7 +1,9 @@
-import {ADD_ITEM, REMOVE_ITEM, UPDATE_ITEM} from './itemsActions';
+import {ADD_ITEM, REMOVE_ITEM, UPDATE_ITEM, SET_ITEMS_LIST} from './itemsActions';
 
 const itemsReducer = (state = [], action) => {
     switch (action.type) {
+        case SET_ITEMS_LIST:
+            return action.items;
         case ADD_ITEM:
             return state.concat([{id: action.id, label: action.label}]);
         case REMOVE_ITEM:

@@ -1,48 +1,74 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native'
-import { ListItem, Icon, Divider } from 'react-native-elements'
-import Swipeable from 'react-native-swipeable';
- 
-const styles = StyleSheet.create({
-    swipeContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingLeft: 20,
-        backgroundColor: 'red'
-    },
-    label: {
-        color: 'white',
-        paddingLeft: 12,
-        fontSize: 18
-    }
-});
-const leftContent = (
-    <View style={styles.swipeContainer}>
-        <Icon name="delete" color="white" />
-        <Text style={styles.label}>Pull to activate</Text>
-    </View>
-);
+import { Animated } from 'react-native'
+import { ListItem, Divider } from 'react-native-elements'
+
+import SwipeRow from './SwipeRow';
+import ItemSwipeContent from './ItemSwipeContent';
+
+const ROW_HEIGHT = 60;
 
 class Item extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isActive: false
+        };
+
+        this.removeItem = this.removeItem.bind(this);
+        this._animated = new Animated.Value(0);
+    }
+
+    removeItem() {
+        const { removeItem, id } = this.props;
+        Animated.timing(this._animated, {
+            toValue: 0,
+            duration: 150,
+        }).start(() => removeItem(id));
+    }
+
     render() {
         const {id, label} = this.props.item;
+        const {isActive} = this.state;
+        const rowStyle = {
+            height: this._animated.interpolate({
+                inputRange: [0, 1],
+                outputRange: [1, ROW_HEIGHT + 1],
+                extrapolate: 'clamp',
+            }),
+            opacity: this._animated
+        }
+
         return (
-            <Swipeable  leftContent={leftContent} 
-                        rightContent={leftContent}
-                        onLeftActionActivate={() => this.setState({leftActionActivated: true})}
-                        onLeftActionDeactivate={() => this.setState({leftActionActivated: false})}
-                        onRightActionRelease={() => this.props.removeItem(id)}>
-                <ListItem
-                    hideChevron
-                    key={`item_${id}`}
-                    title={label}
-                    roundAvatar
-                    leftIcon={{ name: 'flight-takeoff', color: '#d4d6d8' }}
-                />
-                <Divider style={{ backgroundColor: '#d4d6d8' }} />
-            </Swipeable>
+            <Animated.View style={rowStyle}>
+                <SwipeRow
+                    disableRightSwipe
+                    recalculateHiddenLayout
+                    rightOpenValue={-130}
+                    stopRightSwipe={-250}
+                    onRowOpen={this.removeItem}
+                    onThresholdCrossed={isActive => this.setState({isActive})}
+                >
+                    <ItemSwipeContent item={this.props.item} isActive={isActive} />
+                    <ListItem
+                        containerStyle={{height: ROW_HEIGHT}}
+                        hideChevron
+                        key={`item_${id}`}
+                        title={label}
+                        roundAvatar
+                        leftIcon={{ name: 'flight-takeoff', color: '#d4d6d8' }}
+                    />
+                </SwipeRow>
+                <Divider />
+            </Animated.View>
         );
+    }
+
+    componentDidMount() {
+        Animated.timing(this._animated, {
+            toValue: 1,
+            duration: 150,
+        }).start();
     }
 }
 

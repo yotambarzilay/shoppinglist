@@ -1,36 +1,24 @@
 import React from 'react';
 import { 
   StyleSheet, 
-  Text,
-  View, 
-  Button, 
   SafeAreaView
 } from 'react-native';
-import { Input, Icon } from 'react-native-elements';
 import createStore from './src/store/createStore';
-import {addItem, removeItem, updateItem} from './src/store/items/itemsActions';
+import {addItem, removeItem} from './src/store/items/itemsActions';
 import ItemsList from './src/components/ItemsList';
+import AddItemInput from './src/components/AddItemInput';
 
 const store = createStore();
 
 let addedItemId = 0;
 
-const add = () => {
-  store.dispatch(addItem(addedItemId, `item ${addedItemId} label`))
-  addedItemId++;
+const add = (id, label) => {
+  store.dispatch(addItem(id, label))
 }
 
 const remove = id => {
   store.dispatch(removeItem(id));
 }
-
-const update = () => {
-  store.dispatch(updateItem(addedItemId - 1, Date.now()));
-}
-
-add();
-add();
-add();
 
 export default class App extends React.Component {
   constructor(props) {
@@ -43,20 +31,8 @@ export default class App extends React.Component {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        <Input  placeholder="הוספה"
-                leftIcon={
-                  <Icon
-                      name='add'
-                      size={24}
-                      color='#a9d6b2'
-                  />
-                }
-        />
+        <AddItemInput addItem={add}/>
         <ItemsList items={this.state.items} removeItem={remove} />
-
-        <Button onPress={add} title="Add"></Button>
-        <Button onPress={remove} title="Remove"></Button>
-        <Button onPress={update} title="UPDATE"></Button>
       </SafeAreaView>
     );
   }
@@ -64,7 +40,6 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff'
+    flex: 1
   },
 });
