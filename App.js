@@ -1,8 +1,9 @@
 import React from 'react';
 import { 
   StyleSheet, 
-  SafeAreaView
+  View
 } from 'react-native';
+import { Header } from 'react-native-elements';
 import createStore from './src/store/createStore';
 import {addItem, removeItem} from './src/store/items/itemsActions';
 import ItemsList from './src/components/ItemsList';
@@ -30,15 +31,31 @@ export default class App extends React.Component {
   }
   render() {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        <Header
+          outerContainerStyles={styles.headerContainer}
+          statusBarProps={{barStyle: 'dark-content', translucent:true}}
+          centerComponent={{ text: 'רשימת קניות', style: styles.headerTextStyle }}
+        />
         <AddItemInput addItem={add}/>
         <ItemsList items={this.state.items} removeItem={remove} />
-      </SafeAreaView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    backgroundColor: "#f9f9f9",
+    borderBottomWidth: 1,
+    borderBottomColor: "#a9a9a9",
+    height: 90
+  },
+  headerTextStyle: {
+    color: "#191919",
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
   container: {
     flex: 1
   },
