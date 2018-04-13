@@ -5,7 +5,7 @@
 
 # dependencies
 /node_modules
-
+.idea/
 # misc
 .env.local
 .env.development.local

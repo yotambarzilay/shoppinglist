@@ -40,6 +40,16 @@ class Item extends React.Component {
             opacity: this._animated
         }
 
+        const rightIconProps = {
+            type: 'evilicon',
+            name: 'chevron-left',
+            color: '#d4d6d8',
+            size: 28,
+            containerStyle: {
+                paddingTop: 3
+            }
+        };
+
         return (
             <Animated.View style={rowStyle}>
                 <SwipeRow
@@ -56,9 +66,8 @@ class Item extends React.Component {
                         hideChevron
                         key={`item_${id}`}
                         title={label}
-                        titleStyle={{textAlign: 'right'}}
-                        roundAvatar
-                        rightIcon={{ name: 'flight-takeoff', color: '#d4d6d8' }}
+                        titleStyle={{textAlign: 'right', color: '#191919'}}
+                        rightIcon={rightIconProps}
                     />
                 </SwipeRow>
                 <Divider style={{backgroundColor: '#e9e9e9'}}/>
