@@ -14,10 +14,8 @@ import {
 	View
 } from 'react-native';
 
-const PREVIEW_OPEN_DELAY = 700;
-const PREVIEW_CLOSE_DELAY = 300;
 const MAX_VELOCITY_CONTRIBUTION = 5;
-const SCROLL_LOCK_MILLISECONDS = 300;
+const SCROLL_LOCK_MILLISECONDS = 500;
 
 /**
  * Row that is generally used in a SwipeListView.
@@ -36,7 +34,6 @@ class SwipeRow extends Component {
 		this.horizontalSwipeGestureBegan = false;
 		this.swipeInitialX = null;
 		this.parentScrollEnabled = true;
-		this.ranPreview = false;
 		this._ensureScrollEnabledTimer = null;
 		this.state = {
 			dimensionsSet: false,
@@ -44,27 +41,21 @@ class SwipeRow extends Component {
 			hiddenWidth: 0
 		};
 		this._translateX = new Animated.Value(0);
-	}
-
-	componentWillMount() {
+		this.props.onSwipeAnimatedValueReady && this.props.onSwipeAnimatedValueReady(this._translateX);
 		this._panResponder = PanResponder.create({
+			onStartShouldSetPanResponder: () => true,
+      		onStartShouldSetPanResponderCapture: () => true,
 			onMoveShouldSetPanResponder: (e, gs) => this.handleOnMoveShouldSetPanResponder(e, gs),
+			onMoveShouldSetPanResponderCapture: (e, gs) => this.handleOnMoveShouldSetPanResponder(e, gs),
 			onPanResponderMove: (e, gs) => this.handlePanResponderMove(e, gs),
 			onPanResponderRelease: (e, gs) => this.handlePanResponderEnd(e, gs),
 			onPanResponderTerminate: (e, gs) => this.handlePanResponderEnd(e, gs),
-			onShouldBlockNativeResponder: _ => false,
+			onShouldBlockNativeResponder: () => false,
 		});
 	}
 
 	componentWillUnmount() {
 		clearTimeout(this._ensureScrollEnabledTimer)
-	}
-
-	getPreviewAnimation(toValue, delay) {
-		return Animated.timing(
-			this._translateX,
-			{ duration: this.props.previewDuration, toValue, delay }
-		);
 	}
 
 	onContentLayout(e) {
@@ -73,15 +64,6 @@ class SwipeRow extends Component {
 			hiddenHeight: e.nativeEvent.layout.height,
 			hiddenWidth: e.nativeEvent.layout.width,
 		});
-
-		if (this.props.preview && !this.ranPreview) {
-			this.ranPreview = true;
-			let previewOpenValue = this.props.previewOpenValue || this.props.rightOpenValue * 0.5;
-			this.getPreviewAnimation(previewOpenValue, PREVIEW_OPEN_DELAY)
-			.start( _ => {
-				this.getPreviewAnimation(0, PREVIEW_CLOSE_DELAY).start();
-			});
-		}
 	}
 
 	onRowPress() {
@@ -139,7 +121,7 @@ class SwipeRow extends Component {
 
 			this._translateX.setValue(newDX);
 
-			this.notifyThresholdCrossedIfNeeded(gestureState);
+			// this.notifyThresholdCrossedIfNeeded(gestureState);
 		}
 	}
 
@@ -154,10 +136,6 @@ class SwipeRow extends Component {
 		const clampedVelocity = Math.min(gestureState.vx, MAX_VELOCITY_CONTRIBUTION);
 		const projectedExtraPixels = possibleExtraPixels * (clampedVelocity / MAX_VELOCITY_CONTRIBUTION);
 
-		// re-enable scrolling on listView parent
-		this._ensureScrollEnabledTimer = setTimeout(this.ensureScrollEnabled, SCROLL_LOCK_MILLISECONDS);
-
-		// finish up the animation
 		let toValue = 0;
 		if (this._translateX._value >= 0) {
 			// trying to swipe right
@@ -219,11 +197,11 @@ class SwipeRow extends Component {
 			if (this.swipeInitialX < this._translateX._value) {
 				if ((this._translateX._value - projectedExtraPixels) > this.props.leftOpenValue * (this.props.swipeToOpenPercent/100)) {
 					// we're more than halfway
-					toValue = this.props.leftOpenValue;
+					toValue = this._translateX._value; //this.props.leftOpenValue;
 				}
 			} else {
 				if ((this._translateX._value - projectedExtraPixels) > this.props.leftOpenValue * (1 - (this.props.swipeToClosePercent/100))) {
-					toValue = this.props.leftOpenValue;
+					toValue = this._translateX._value; //this.props.leftOpenValue;
 				}
 			}
 		} else {
@@ -231,16 +209,21 @@ class SwipeRow extends Component {
 			if (this.swipeInitialX > this._translateX._value) {
 				if ((this._translateX._value - projectedExtraPixels) < this.props.rightOpenValue * (this.props.swipeToOpenPercent/100)) {
 					// we're more than halfway
-					toValue = this.props.rightOpenValue;
+					toValue = this._translateX._value; //this.props.rightOpenValue;
 				}
 			} else {
 				if ((this._translateX._value - projectedExtraPixels) < this.props.rightOpenValue * (1 - (this.props.swipeToClosePercent/100))) {
-					toValue = this.props.rightOpenValue;
+					toValue = this._translateX._value; //this.props.rightOpenValue;
+				}
 				}
 			}
+
+		if (toValue) {
+			this.manuallySwipeRow(-1 * this.state.hiddenWidth);
+		} else {
+			this.manuallySwipeRow(0);
 		}
 
-		this.manuallySwipeRow(toValue);
 	}
 
 	/*
@@ -251,20 +234,19 @@ class SwipeRow extends Component {
 	}
 
 	manuallySwipeRow(toValue) {
-		Animated.spring(
+		Animated.timing(
 			this._translateX,
 			{
+				duration: 100,
 				toValue,
-				friction: this.props.friction,
-				tension: this.props.tension,
 			}
 		).start( _ => {
-			this.ensureScrollEnabled()
 			if (toValue === 0) {
 				this.props.onRowDidClose && this.props.onRowDidClose();
 			} else {
 				this.props.onRowDidOpen && this.props.onRowDidOpen();
 			}
+			this.ensureScrollEnabled()			
 		});
 
 		if (toValue === 0) {
@@ -449,19 +431,6 @@ SwipeRow.propTypes = {
 	 */
 	style: ViewPropTypes.style,
 	/**
-	 * Should the row do a slide out preview to show that it is swipeable
-	 */
-	preview: PropTypes.bool,
-	/**
-	 * Duration of the slide out preview animation
-	 */
-	previewDuration: PropTypes.number,
-	/**
-	 * TranslateX value for the slide out preview animation
-	 * Default: 0.5 * props.rightOpenValue
-	 */
-	previewOpenValue: PropTypes.number,
-	/**
 	 * The dx value used to detect when a user has begun a swipe gesture
 	 */
 	directionalDistanceChangeThreshold: PropTypes.number,
@@ -490,8 +459,6 @@ SwipeRow.defaultProps = {
 	disableLeftSwipe: false,
 	disableRightSwipe: false,
 	recalculateHiddenLayout: false,
-	preview: false,
-	previewDuration: 300,
 	directionalDistanceChangeThreshold: 2,
 	swipeToOpenPercent: 50,
 	swipeToOpenVelocityContribution: 0,

@@ -12,7 +12,7 @@ class Item extends React.Component {
         super(props);
 
         this.state = {
-            isActive: false
+            swipeValue: null
         };
 
         this.removeItem = this.removeItem.bind(this);
@@ -29,6 +29,7 @@ class Item extends React.Component {
 
     render() {
         const {id, label} = this.props.item;
+        const {setScrollEnabled} = this.props;
         const {isActive} = this.state;
         const rowStyle = {
             height: this._animated.interpolate({
@@ -45,11 +46,11 @@ class Item extends React.Component {
                     disableRightSwipe
                     recalculateHiddenLayout
                     rightOpenValue={-130}
-                    stopRightSwipe={-250}
                     onRowOpen={this.removeItem}
-                    onThresholdCrossed={isActive => this.setState({isActive})}
+                    onSwipeAnimatedValueReady={swipeValue => this.setState({swipeValue})}
+                    setScrollEnabled={setScrollEnabled}
                 >
-                    <ItemSwipeContent item={this.props.item} isActive={isActive} />
+                    <ItemSwipeContent item={this.props.item} swipeValue={this.state.swipeValue}/>
                     <ListItem
                         containerStyle={{height: ROW_HEIGHT}}
                         hideChevron

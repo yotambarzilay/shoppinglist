@@ -1,5 +1,5 @@
 import React from 'react';
-import { Keyboard } from 'react-native';
+import { View } from 'react-native';
 import { Input, Icon } from 'react-native-elements';
 
 let suffix = 0;
@@ -11,7 +11,7 @@ class AddItemInput extends React.Component {
         this.state = {
             value: ''
         };
-        
+
         this.onSubmitEditing = this.onSubmitEditing.bind(this);
     }
 
@@ -21,20 +21,23 @@ class AddItemInput extends React.Component {
 
     render() {
         return (
-            <Input  placeholder="הוספה"
-                    controlled
-                    value={this.state.value}
-                    onChange={e => this.setValue(e)}
-                    onSubmitEditing={this.onSubmitEditing}
-                    returnKeyType='done'
-                    leftIcon={
-                        <Icon
-                            name='add'
-                            size={24}
-                            color='#a9d6b2'
-                        />
-                    }
-            />
+            <View style={style}>
+                <Input  placeholder="הוספה"
+                        controlled
+                        value={this.state.value}
+                        onChange={e => this.setValue(e)}
+                        blurOnSubmit={false}
+                        onSubmitEditing={this.onSubmitEditing}
+                        returnKeyType='done'
+                        leftIcon={
+                            <Icon
+                                name='add'
+                                size={24}
+                                color='#a9d6b2'
+                            />
+                        }
+                />
+            </View>
         );
     }
 
@@ -43,5 +46,10 @@ class AddItemInput extends React.Component {
         this.setState({value: ''});
     }
 }
+
+const style = {
+    flex: 0,
+    height: 60
+};
 
 export default AddItemInput;
