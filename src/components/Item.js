@@ -20,11 +20,11 @@ class Item extends React.Component {
     }
 
     removeItem() {
-        const { removeItem, id } = this.props;
+        const { removeItem, item } = this.props;
         Animated.timing(this._animated, {
             toValue: 0,
             duration: 150,
-        }).start(() => removeItem(id));
+        }).start(() => removeItem(item.id));
     }
 
     render() {
@@ -46,7 +46,7 @@ class Item extends React.Component {
                     disableRightSwipe
                     recalculateHiddenLayout
                     rightOpenValue={-130}
-                    onRowOpen={this.removeItem}
+                    onRowDidOpen={this.removeItem}
                     onSwipeAnimatedValueReady={swipeValue => this.setState({swipeValue})}
                     setScrollEnabled={setScrollEnabled}
                 >
@@ -56,11 +56,12 @@ class Item extends React.Component {
                         hideChevron
                         key={`item_${id}`}
                         title={label}
+                        titleStyle={{textAlign: 'right'}}
                         roundAvatar
-                        leftIcon={{ name: 'flight-takeoff', color: '#d4d6d8' }}
+                        rightIcon={{ name: 'flight-takeoff', color: '#d4d6d8' }}
                     />
                 </SwipeRow>
-                <Divider />
+                <Divider style={{backgroundColor: '#e9e9e9'}}/>
             </Animated.View>
         );
     }

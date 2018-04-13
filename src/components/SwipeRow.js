@@ -120,55 +120,6 @@ class SwipeRow extends Component {
 			if (this.props.stopRightSwipe && newDX < this.props.stopRightSwipe) { newDX = this.props.stopRightSwipe; }
 
 			this._translateX.setValue(newDX);
-
-			// this.notifyThresholdCrossedIfNeeded(gestureState);
-		}
-	}
-
-	notifyThresholdCrossedIfNeeded(gestureState) {
-		if (!this.props.onThresholdCrossed) {
-			return;
-		}
-
-		// decide how much the velocity will affect the final position that the list item settles in.
-		const swipeToOpenVelocityContribution = this.props.swipeToOpenVelocityContribution;
-		const possibleExtraPixels = this.props.rightOpenValue * (swipeToOpenVelocityContribution);
-		const clampedVelocity = Math.min(gestureState.vx, MAX_VELOCITY_CONTRIBUTION);
-		const projectedExtraPixels = possibleExtraPixels * (clampedVelocity / MAX_VELOCITY_CONTRIBUTION);
-
-		let toValue = 0;
-		if (this._translateX._value >= 0) {
-			// trying to swipe right
-			if (this.swipeInitialX < this._translateX._value) {
-				if ((this._translateX._value - projectedExtraPixels) > this.props.leftOpenValue * (this.props.swipeToOpenPercent/100)) {
-					// we're more than halfway
-					toValue = this.props.leftOpenValue;
-				}
-			} else {
-				if ((this._translateX._value - projectedExtraPixels) > this.props.leftOpenValue * (1 - (this.props.swipeToClosePercent/100))) {
-					toValue = this.props.leftOpenValue;
-				}
-			}
-		} else {
-			// trying to swipe left
-			if (this.swipeInitialX > this._translateX._value) {
-				if ((this._translateX._value - projectedExtraPixels) < this.props.rightOpenValue * (this.props.swipeToOpenPercent/100)) {
-					// we're more than halfway
-					toValue = this.props.rightOpenValue;
-				}
-			} else {
-				if ((this._translateX._value - projectedExtraPixels) < this.props.rightOpenValue * (1 - (this.props.swipeToClosePercent/100))) {
-					toValue = this.props.rightOpenValue;
-				}
-			}
-		}
-
-		if (toValue && !this.thresholdCrossed) {
-			this.thresholdCrossed = true;
-			this.props.onThresholdCrossed(true);
-		} else if (!toValue && this.thresholdCrossed) {
-			this.thresholdCrossed = false;
-			this.props.onThresholdCrossed(false);
 		}
 	}
 
@@ -215,13 +166,13 @@ class SwipeRow extends Component {
 				if ((this._translateX._value - projectedExtraPixels) < this.props.rightOpenValue * (1 - (this.props.swipeToClosePercent/100))) {
 					toValue = this._translateX._value; //this.props.rightOpenValue;
 				}
-				}
 			}
+		}
 
-		if (toValue) {
-			this.manuallySwipeRow(-1 * this.state.hiddenWidth);
-		} else {
+		if (!toValue) {
 			this.manuallySwipeRow(0);
+		} else {
+			this.manuallySwipeRow(-1 * this.state.hiddenWidth);
 		}
 
 	}
@@ -237,7 +188,7 @@ class SwipeRow extends Component {
 		Animated.timing(
 			this._translateX,
 			{
-				duration: 100,
+				duration: 75,
 				toValue,
 			}
 		).start( _ => {

@@ -6,8 +6,7 @@ import {
 import { Header } from 'react-native-elements';
 import createStore from './src/store/createStore';
 import {addItem, removeItem} from './src/store/items/itemsActions';
-import ItemsList from './src/components/ItemsList';
-import AddItemInput from './src/components/AddItemInput';
+import ShoppingListView from './src/components/ShoppingListView';
 
 const store = createStore();
 
@@ -21,9 +20,9 @@ const remove = id => {
   store.dispatch(removeItem(id));
 }
 
-add('a', 'Item 1');
-add('b', 'Item 2');
-add('c', 'Item 3');
+// add('a', 'הום');
+// add('b', 'גנט');
+// add('c', 'טים');
 
 export default class App extends React.Component {
   constructor(props) {
@@ -33,16 +32,17 @@ export default class App extends React.Component {
       this.setState(store.getState());
     })
   }
+
   render() {
     return (
       <KeyboardAvoidingView style={styles.container} keyboardVerticalOffset={0} behavior="padding">
         <Header
+          networkActivityIndicatorVisible={true}
           outerContainerStyles={styles.headerContainer}
-          statusBarProps={{barStyle: 'dark-content', translucent:true}}
+          statusBarProps={{barStyle: 'dark-content'}}
           centerComponent={{ text: 'רשימת קניות', style: styles.headerTextStyle }}
         />
-        <ItemsList items={this.state.items} removeItem={remove} />
-        <AddItemInput addItem={add}/>
+        <ShoppingListView items={this.state.items} add={add} remove={remove} />
       </KeyboardAvoidingView>
     );
   }
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: "#f9f9f9",
     borderBottomWidth: 1,
-    borderBottomColor: "#a9a9a9",
+    borderBottomColor: "#d9d9d9",
     flex: 0,
     height: 90
   },
