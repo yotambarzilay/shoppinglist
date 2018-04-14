@@ -5,7 +5,9 @@ import { Icon } from 'react-native-elements';
 const EmptyView = () => (
     <View style={styles.container}>
         <Icon color="#9f9f9f" type="feather" name="check" size={56} />
-        <Text style={styles.label}>יש הכל</Text>
+        <View>
+            <Text style={styles.label}>יש הכל</Text>
+        </View>
     </View>
 );
 
