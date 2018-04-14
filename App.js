@@ -2,7 +2,10 @@ import React from 'react';
 import {Provider} from 'react-redux';
 import {
     StyleSheet,
-    KeyboardAvoidingView
+    KeyboardAvoidingView,
+    View,
+    TouchableWithoutFeedback,
+    Keyboard
 } from 'react-native';
 import {Header} from 'react-native-elements';
 import ShoppingListView from './src/components/ShoppingListView';
@@ -26,12 +29,16 @@ export default class ShoppingListApp extends React.Component {
         return (
             <Provider store={store}>
                 <KeyboardAvoidingView style={styles.container} keyboardVerticalOffset={0} behavior="padding">
-                    <Header
-                        outerContainerStyles={styles.headerContainer}
-                        statusBarProps={{barStyle: 'dark-content'}}
-                        centerComponent={{text: 'רשימת קניות', style: styles.headerTextStyle}}
-                    />
-                    <ShoppingListView/>
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={styles.container}>
+                        <View style={styles.container}>
+                            <Header
+                                outerContainerStyles={styles.headerContainer}
+                                statusBarProps={{barStyle: 'dark-content'}}
+                                centerComponent={{text: 'רשימת קניות', style: styles.headerTextStyle}}
+                            />
+                            <ShoppingListView/>
+                        </View>
+                    </TouchableWithoutFeedback>
                 </KeyboardAvoidingView>
             </Provider>
         );

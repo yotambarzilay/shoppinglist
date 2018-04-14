@@ -26,6 +26,7 @@ class ItemsList extends React.Component {
 		return (
 			<ScrollView style={style}
 						scrollEnabled={scrollEnabled}
+						keyboardShouldPersistTaps="always"
 					>
 				{itemIds.map(id => (
 					<Item 	key={id}

@@ -1,5 +1,9 @@
 {
   "expo": {
+    "privacy": "public",
+    "splash": {
+      "backgroundColor": "#C9C9C9"
+    },
     "sdkVersion": "26.0.0"
   }
 }
