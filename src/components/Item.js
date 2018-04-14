@@ -8,15 +8,11 @@ import ItemSwipeContent from './ItemSwipeContent';
 const ROW_HEIGHT = 60;
 
 class Item extends React.Component {
-    constructor(props) {
-        super(props);
+    state = {
+        swipeValue: null
+    };
 
-        this.state = {
-            swipeValue: null
-        };
-
-        this._animated = new Animated.Value(0);
-    }
+    _animated = new Animated.Value(0);
 
     removeItem = () => {
         Animated.timing(this._animated, {

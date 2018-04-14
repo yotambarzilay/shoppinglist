@@ -9,16 +9,13 @@ const fade = (animated, value, cb) => {
 }
 
 class Fade extends React.Component {
-    constructor(props) {
-        super(props);
+    state = {
+        unmountingComponent: null
+    };
 
-        this.state = {
-            unmountingComponent: null
-        };
+    _animated = new Animated.Value(0);
 
-        this._animated = new Animated.Value(0);
-        this.measurements = null;
-    }
+    measurements = null;
 
     fadeIn() {
         fade(this._animated, 1);

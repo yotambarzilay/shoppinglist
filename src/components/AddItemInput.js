@@ -8,7 +8,6 @@ class IconClass extends React.Component {
     }
 }
 const AnimatedIcon = Animated.createAnimatedComponent(IconClass);
-const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 class AddItemInput extends React.Component {
     state = {value: ''};
@@ -17,7 +16,7 @@ class AddItemInput extends React.Component {
 
     setValue = (value) => {
         this.setState({value});
-    }
+    };
 
     onSubmitEditing = () => {
         if (!this.state.value) {
@@ -26,21 +25,29 @@ class AddItemInput extends React.Component {
 
         this.props.onSubmit(this.state.value);
         this.setValue('');
-    }
+    };
 
-    focus() {
-        this._textInput.focus();
-    }
+    handlePlusClick = () => {
+        if (!this._textInput.isFocused()) {
+            this._textInput.focus();
+        } else if (this.state.value) {
+            this.onSubmitEditing()
+        }
+    };
 
     setFocused = focused => {
         Animated.timing(this._color, {
             duration: 200,
             toValue: focused ? 1 : 0
         }).start();
+    };
+
+    focus() {
+        this._textInput.focus()
     }
 
     render() {
-        const iconColor = this._color.interpolate({
+        const iconColor = this.state.value ? '#13b70b' : this._color.interpolate({
             inputRange: [0, 1],
             outputRange: ['#dfdfdf', '#afafaf'],
             extrapolate: 'clamp',
@@ -48,15 +55,8 @@ class AddItemInput extends React.Component {
 
         return (
             <View style={styles.container}>
-                <AnimatedIcon 
-                    size={32} 
-                    name="pencil" 
-                    type="evilicon" 
-                    color={iconColor} 
-                    containerStyle={styles.icon}
-                />
-                <AnimatedTextInput
-                    ref={ref => ref ? this._textInput = ref.getNode() : this._textInput = null}
+                <TextInput
+                    ref={ref => this._textInput = ref}
                     style={styles.input}
                     placeholder="מה צריך?"
                     placeholderTextColor={'#dfdfdf'}
@@ -67,7 +67,14 @@ class AddItemInput extends React.Component {
                     onBlur={() => this.setFocused(false)}
                     blurOnSubmit={false}
                     onSubmitEditing={this.onSubmitEditing}
-                    returnKeyType='done'
+                />
+                <AnimatedIcon
+                    size={32}
+                    name="plus"
+                    type="feather"
+                    color={iconColor}
+                    onPress={this.handlePlusClick}
+                    containerStyle={styles.icon}
                 />
             </View>
         );
@@ -85,13 +92,13 @@ const styles = StyleSheet.create({
     },
     icon: {
         alignSelf: 'flex-start',
+        paddingRight: 20,
         paddingLeft: 10,
-        width: 40,
+        width: 70,
         height: 60
     },
     input: {
         flex: 1,
-        marginRight: 20,
         marginStart: 10,
         height: 60,
         fontSize: 18,
