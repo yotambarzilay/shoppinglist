@@ -1,13 +1,15 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-const EmptyView = () => (
+const EmptyView = ({onPress}) => (
     <View style={styles.container}>
-        <Icon color="#9f9f9f" type="feather" name="check" size={56} />
         <View>
-            <Text style={styles.label}>יש הכל</Text>
+            <Text style={styles.title}>הוספה</Text>
         </View>
+        <TouchableOpacity onPress={onPress}>
+            <Icon color="#9f9f9f" type="feather" name="plus" size={56} />
+        </TouchableOpacity>
     </View>
 );
 
@@ -17,10 +19,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    label: {
+    title: {
         color: '#9f9f9f',
         fontSize: 26,
-        marginTop: 10
+        marginBottom: 30
     }
 })
 

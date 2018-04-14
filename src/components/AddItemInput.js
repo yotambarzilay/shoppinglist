@@ -28,6 +28,10 @@ class AddItemInput extends React.Component {
         this.setValue('');
     }
 
+    focus() {
+        this._textInput.focus();
+    }
+
     setFocused = focused => {
         Animated.timing(this._color, {
             duration: 200,
@@ -105,4 +109,4 @@ const mapDispatchToProps = dispatch => ({
     onSubmit: value => dispatch(addItem(generateId(), value))
 });
 
-export default connect(null, mapDispatchToProps)(AddItemInput);
+export default connect(null, mapDispatchToProps, null, {withRef: true})(AddItemInput);

@@ -5,17 +5,21 @@ import Fade from './Fade';
 import EmptyView from './EmptyListView';
 import AddItemInput from './AddItemInput';
 
-const ShoppingListView = ({noItems}) => (
-    <View style={styles.container}>
-        <Fade>
-            {noItems ? <EmptyView key="emptyView" /> : null}
-        </Fade>
-        {noItems ? null : <ItemsList key="itemsList" />}
-        <SafeAreaView style={styles.footer}>
-            <AddItemInput />
-        </SafeAreaView>
-    </View>
-);
+const ShoppingListView = ({noItems}) => {
+    let input;
+
+    return (
+        <View style={styles.container}>
+            <Fade>
+                {noItems ? <EmptyView key="emptyView" onPress={() => input.focus()}/> : null}
+            </Fade>
+            {noItems ? null : <ItemsList key="itemsList"/>}
+            <SafeAreaView style={styles.footer}>
+                <AddItemInput ref={ref => input = ref && ref.getWrappedInstance()}/>
+            </SafeAreaView>
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
