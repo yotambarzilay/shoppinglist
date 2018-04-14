@@ -42,16 +42,6 @@ class AddItemInput extends React.Component {
             extrapolate: 'clamp',
         });
 
-        const dividerAnimatedPositionStyle = {
-            transform: [{
-                translateX: this._color.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [400, 0],
-                    extrapolate: 'clamp'
-                })
-            }]
-        };
-
         return (
             <View style={styles.container}>
                 <AnimatedIcon 
