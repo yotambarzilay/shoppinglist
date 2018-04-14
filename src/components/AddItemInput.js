@@ -11,15 +11,19 @@ const AnimatedIcon = Animated.createAnimatedComponent(IconClass);
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 class AddItemInput extends React.Component {
-    state = {value: ''}
-    _color = new Animated.Value(0)
+    state = {value: ''};
+    _color = new Animated.Value(0);
+    _textInput = null;
 
     setValue = (value) => {
         this.setState({value});
     }
 
     onSubmitEditing = () => {
-        // TODO handle empty value
+        if (!this.state.value) {
+            return this._textInput.blur();
+        }
+
         this.props.onSubmit(this.state.value);
         this.setValue('');
     }
@@ -57,7 +61,8 @@ class AddItemInput extends React.Component {
                     color={iconColor} 
                     containerStyle={styles.icon}
                 />
-                <AnimatedTextInput  
+                <AnimatedTextInput
+                    ref={ref => ref ? this._textInput = ref.getNode() : this._textInput = null}
                     style={styles.input}
                     placeholder="מה צריך?"
                     placeholderTextColor={'#dfdfdf'}
