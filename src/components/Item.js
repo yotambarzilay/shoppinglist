@@ -47,7 +47,8 @@ class Item extends React.Component {
                 <SwipeRow
                     disableRightSwipe
                     recalculateHiddenLayout
-                    rightOpenValue={-130}
+                    rightOpenValue={-300}
+                    swipeToOpenVelocityContribution={1}
                     onRowDidOpen={this.removeItem}
                     onSwipeAnimatedValueReady={swipeValue => this.setState({swipeValue})}
                     setScrollEnabled={setScrollEnabled}

@@ -2,14 +2,17 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-const EmptyView = ({onPress}) => (
+const EmptyListView = ({onPress, showAddButton}) => (
     <View style={styles.container}>
-        <View>
-            <Text style={styles.title}>הוספה</Text>
-        </View>
-        <TouchableOpacity onPress={onPress}>
-            <Icon color="#9f9f9f" type="feather" name="plus" size={56} />
-        </TouchableOpacity>
+        {
+            showAddButton
+                ?   <TouchableOpacity key="add" onPress={onPress}>
+                        <Icon color="#cfcfcf" type="feather" name="plus" size={56}/>
+                    </TouchableOpacity>
+                :   <View>
+                        <Text style={styles.title}>הרשימה ריקה</Text>
+                    </View>
+        }
     </View>
 );
 
@@ -20,10 +23,11 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     title: {
-        color: '#9f9f9f',
+        color: '#cfcfcf',
         fontSize: 26,
-        marginBottom: 30
+        height: 56,
+        transform: [{translateY: 28}]
     }
 })
 
-export default EmptyView;
+export default EmptyListView;

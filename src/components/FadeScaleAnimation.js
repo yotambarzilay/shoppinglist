@@ -8,7 +8,7 @@ const fade = (animated, value, cb) => {
     }).start(cb);
 }
 
-class Fade extends React.Component {
+class FadeScaleAnimation extends React.Component {
     state = {
         unmountingComponent: null
     };
@@ -87,4 +87,4 @@ class Fade extends React.Component {
     }
 }
 
-export default Fade;
+export default FadeScaleAnimation;

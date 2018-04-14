@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, StyleSheet, View, TextInput } from 'react-native';
+import { Animated, StyleSheet, View, TextInput, TouchableWithoutFeedback } from 'react-native';
 import { Icon } from 'react-native-elements';
 
 class IconClass extends React.Component {
@@ -35,7 +35,13 @@ class AddItemInput extends React.Component {
         }
     };
 
-    setFocused = focused => {
+    onFocusChange = focused => {
+        if (!focused && this.props.onBlur) {
+            this.props.onBlur();
+        } else if (focused && this.props.onFocus) {
+            this.props.onFocus();
+        }
+
         Animated.timing(this._color, {
             duration: 200,
             toValue: focused ? 1 : 0
@@ -63,19 +69,20 @@ class AddItemInput extends React.Component {
                     controlled
                     value={this.state.value}
                     onChange={e => this.setValue(e.nativeEvent.text)}
-                    onFocus={() => this.setFocused(true)}
-                    onBlur={() => this.setFocused(false)}
+                    onFocus={() => this.onFocusChange(true)}
+                    onBlur={() => this.onFocusChange(false)}
                     blurOnSubmit={false}
                     onSubmitEditing={this.onSubmitEditing}
                 />
-                <AnimatedIcon
-                    size={32}
-                    name="plus"
-                    type="feather"
-                    color={iconColor}
-                    onPress={this.handlePlusClick}
-                    containerStyle={styles.icon}
-                />
+                <TouchableWithoutFeedback onPress={this.handlePlusClick}>
+                    <AnimatedIcon
+                        size={32}
+                        name="plus"
+                        type="feather"
+                        color={iconColor}
+                        containerStyle={styles.icon}
+                    />
+                </TouchableWithoutFeedback>
             </View>
         );
     }
