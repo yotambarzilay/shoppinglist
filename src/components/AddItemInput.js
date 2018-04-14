@@ -1,9 +1,6 @@
 import React from 'react';
 import { Animated, StyleSheet, View, TextInput } from 'react-native';
-import { Icon, Divider } from 'react-native-elements';
-
-let suffix = 0;
-const generateId = () => `${Date.now().toString(36)}${suffix++}`;
+import { Icon } from 'react-native-elements';
 
 class IconClass extends React.Component {
     render() {
@@ -14,15 +11,16 @@ const AnimatedIcon = Animated.createAnimatedComponent(IconClass);
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 class AddItemInput extends React.Component {
-    _color = new Animated.Value(0)
     state = {value: ''}
+    _color = new Animated.Value(0)
 
     setValue = (value) => {
         this.setState({value});
     }
 
     onSubmitEditing = () => {
-        this.props.addItem(generateId(), this.state.value);
+        // TODO handle empty value
+        this.props.onSubmit(this.state.value);
         this.setValue('');
     }
 
@@ -100,6 +98,16 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: 'right'
     }
-})
+});
 
-export default AddItemInput;
+import { connect } from 'react-redux';
+
+let suffix = 0;
+import { addItem } from '../store/items/itemsActions';
+const generateId = () => `${Date.now().toString(36)}${suffix++}`;
+
+const mapDispatchToProps = dispatch => ({
+    onSubmit: value => dispatch(addItem(generateId(), value))
+});
+
+export default connect(null, mapDispatchToProps)(AddItemInput);

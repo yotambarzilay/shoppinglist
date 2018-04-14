@@ -1,18 +1,45 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, View, Text } from 'react-native';
+import { StyleSheet, SafeAreaView, View, Animated } from 'react-native';
 import ItemsList from './ItemsList';
 import EmptyView from './EmptyListView';
 import AddItemInput from './AddItemInput';
 
-const ShoppingListView = ({items, remove, add}) => (
+// class Fade extends React.Component {
+//     constructor(props) {
+//         super(props);
+//
+//         this.state = {
+//             unmountingComponent: null
+//         };
+//
+//         this._animated = new Animated.Value(props.children ? 1 : 0);
+//     }
+//
+//     componentWillReceiveProps(nextProps) {
+//         if (!nextProps.children)
+//     }
+//
+//     render() {
+//         const scale = this._animated.interpolate({
+//             fromRange: [0, 1],
+//             toRange: [1.1, 1],
+//             extrapolate: 'clamp'
+//         });
+//
+//         return (
+//             <Animated.View style={{opacity: this._animated, transform: [{scale}]}}>
+//                 {this.props.children || this.state.unmountingComponent}
+//             </Animated.View>
+//         )
+//     }
+//
+// }
+
+const ShoppingListView = ({noItems}) => (
     <View style={styles.container}>
-        {
-            items.length 
-                ? <ItemsList key="itemsList" items={items} removeItem={remove} />
-                : <EmptyView key="emptyView" />
-        }
+        {noItems ?  <EmptyView key="emptyView" /> : <ItemsList key="itemsList" />}
         <SafeAreaView style={styles.footer}>
-            <AddItemInput addItem={add}/>
+            <AddItemInput />
         </SafeAreaView>
     </View>
 );
@@ -23,10 +50,13 @@ const styles = StyleSheet.create({
     },
     footer: {
         backgroundColor: '#f9f9f9'
-    },
-    noItems: {
-       
     }
 });
 
-export default ShoppingListView;
+import { connect } from 'react-redux';
+
+const mapStateToProps = ({items}) => ({
+    noItems: !items.length
+});
+
+export default connect(mapStateToProps, {})(ShoppingListView);

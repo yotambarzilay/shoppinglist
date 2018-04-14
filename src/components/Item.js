@@ -15,22 +15,18 @@ class Item extends React.Component {
             swipeValue: null
         };
 
-        this.removeItem = this.removeItem.bind(this);
         this._animated = new Animated.Value(0);
     }
 
-    removeItem() {
-        const { removeItem, item } = this.props;
+    removeItem = () => {
         Animated.timing(this._animated, {
             toValue: 0,
             duration: 150,
-        }).start(() => removeItem(item.id));
+        }).start(() => this.props.removeItem());
     }
 
     render() {
-        const {id, label} = this.props.item;
-        const {setScrollEnabled} = this.props;
-        const {isActive} = this.state;
+        const {id, label, setScrollEnabled} = this.props;
         const rowStyle = {
             height: this._animated.interpolate({
                 inputRange: [0, 1],
@@ -60,7 +56,7 @@ class Item extends React.Component {
                     onSwipeAnimatedValueReady={swipeValue => this.setState({swipeValue})}
                     setScrollEnabled={setScrollEnabled}
                 >
-                    <ItemSwipeContent item={this.props.item} swipeValue={this.state.swipeValue}/>
+                    <ItemSwipeContent swipeValue={this.state.swipeValue}/>
                     <ListItem
                         containerStyle={{height: ROW_HEIGHT}}
                         hideChevron
@@ -83,4 +79,16 @@ class Item extends React.Component {
     }
 }
 
-export default Item;
+import { connect } from 'react-redux';
+import { removeItem } from '../store/items/itemsActions';
+
+const mapStateToProps = ({items}, {id}) => {
+    const {label} = items.find(item => item.id === id);
+    return {id, label};
+};
+
+const mapDispatchToProps = (dispatch, {id}) => ({
+    removeItem: () => dispatch(removeItem(id))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Item);

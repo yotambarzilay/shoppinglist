@@ -4,8 +4,8 @@ import { Icon } from 'react-native-elements';
 
 const EmptyView = () => (
     <View style={styles.container}>
-        <Text style={styles.label}>יש הכל</Text>
         <Icon color="#9f9f9f" type="feather" name="check" size={56} />
+        <Text style={styles.label}>יש הכל</Text>
     </View>
 );
 
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     label: {
         color: '#9f9f9f',
         fontSize: 26,
-        marginBottom: 10
+        marginTop: 10
     }
 })
 

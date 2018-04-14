@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View } from 'react-native'
+import { ScrollView } from 'react-native'
 import Item from './Item';
 
 const style = {
@@ -21,23 +21,27 @@ class ItemsList extends React.Component {
 	}
 
 	render() {
-		const {items, removeItem} = this.props;
+		const {itemIds} = this.props;
 		const {scrollEnabled} = this.state;
 		return (
-			<ScrollView style={style} 
-						scrollEnabled={scrollEnabled} 
-						ref={listView => this._listView = listView} 
+			<ScrollView style={style}
+						scrollEnabled={scrollEnabled}
 					>
-				{items.map(item => (
-					<Item 	key={item.id}
-							item={item} 
-							removeItem={removeItem} 
-							setScrollEnabled={this.setScrollEnabled} 
+				{itemIds.map(id => (
+					<Item 	key={id}
+							id={id}
+							setScrollEnabled={this.setScrollEnabled}
 						/>
 				))}
 			</ScrollView>
 		);
 	}
 }
-    
-export default ItemsList;
+
+import {connect} from 'react-redux';
+
+const mapStateToProps = ({items}) => ({
+	itemIds: items.map(({id}) => id)
+});
+
+export default connect(mapStateToProps, {})(ItemsList);
