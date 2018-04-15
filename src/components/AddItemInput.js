@@ -120,7 +120,7 @@ import { addItem } from '../store/items/itemsActions';
 const generateId = () => `${Date.now().toString(36)}${suffix++}`;
 
 const mapDispatchToProps = dispatch => ({
-    onSubmit: value => dispatch(addItem(generateId(), value))
+    onSubmit: value => dispatch(addItem(value))
 });
 
 export default connect(null, mapDispatchToProps, null, {withRef: true})(AddItemInput);

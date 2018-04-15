@@ -5,6 +5,9 @@ const itemsReducer = (state = [], action) => {
         case SET_ITEMS_LIST:
             return action.items;
         case ADD_ITEM:
+            if (state.find(item => item.id === action.id)) {
+                return state;
+            }
             return [{id: action.id, label: action.label}].concat(state);
         case REMOVE_ITEM:
             return state.filter(item => item.id !== action.id);

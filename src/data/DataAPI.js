@@ -1,32 +1,45 @@
-import { AsyncStorage } from 'react-native';
+import * as firebase from 'firebase';
 
-const ITEMS_KEY = '@shoppinglist.items';
+// Initialize Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyCVXneB8vviHJ7iJ7jA9Fn-AVWWrg1jpa0",
+    authDomain: "shoppinglist-9bb18.firebaseapp.com",
+    databaseURL: "https://shoppinglist-9bb18.firebaseio.com",
+    storageBucket: "shoppinglist-9bb18.appspot.com"
+};
 
-class DataAPI {
+firebase.initializeApp(firebaseConfig);
+
+class FirebaseDataAPI {
     async fetchItems() {
-        const data = await AsyncStorage.getItem(ITEMS_KEY);
-        console.log('data: ', data);
-        debugger;
-        return data ? JSON.parse(data) : [];
+        return new Promise(res => {
+            firebase.database().ref('items').on('value', (snapshot) => {
+                const items = Object.values(snapshot.val() || {}).reverse();
+                res(items);
+            });
+        });
     }
 
-    async addItem(item) {
-        const data = await AsyncStorage.getItem(ITEMS_KEY);
-        const items = data ? JSON.parse(data) : [];
-        items.unshift(item);
-        const setData = await AsyncStorage.setItem(ITEMS_KEY, JSON.stringify(items));
-        console.log('setData:', setData);
+    addItem(label) {
+        const newPostRef = firebase.database().ref('items').push();
+        const id = newPostRef.key;
+
+        newPostRef.set({label, id});
+
+        return id;
     }
 
     async removeItem(itemId) {
-        const data = await AsyncStorage.getItem(ITEMS_KEY);
-        if (!data) {
-            return;
-        }
+        return firebase.database().ref(`items/${itemId}`).remove();
+    }
 
-        const items = JSON.parse(data).filter(item => item.id !== itemId);
-        return AsyncStorage.setItem(ITEMS_KEY, JSON.stringify(items));
+    listenToItemAdded(onItemAdded) {
+        firebase.database().ref('items').on('child_added', data => onItemAdded(data.val()));
+    }
+
+    listenToItemRemoved(onItemRemoved) {
+        firebase.database().ref('items').on('child_removed', data => onItemRemoved(data.key));
     }
 }
 
-export default DataAPI;
+export default FirebaseDataAPI;

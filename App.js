@@ -10,7 +10,7 @@ import {
 import {Header} from 'react-native-elements';
 import ShoppingListView from './src/components/ShoppingListView';
 import createStore from './src/store/createStore';
-import {setItemsList} from './src/store/items/itemsActions';
+import {setItemsList, onItemAdded, onItemRemoved} from './src/store/items/itemsActions';
 import DataAPI from './src/data/DataAPI';
 
 const dataAPI = new DataAPI();
@@ -27,6 +27,8 @@ export default class ShoppingListApp extends React.Component {
         });
 
         dataAPI.fetchItems().then(items => {
+            dataAPI.listenToItemAdded(({id, label}) => store.dispatch(onItemAdded(id, label)));
+            dataAPI.listenToItemRemoved(id => store.dispatch(onItemRemoved(id)));
             store.dispatch(setItemsList(items));
         });
     }
