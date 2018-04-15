@@ -10,9 +10,11 @@ import {
 import {Header} from 'react-native-elements';
 import ShoppingListView from './src/components/ShoppingListView';
 import createStore from './src/store/createStore';
+import {setItemsList} from './src/store/items/itemsActions';
+import DataAPI from './src/data/DataAPI';
 
-
-const store = createStore();
+const dataAPI = new DataAPI();
+const store = createStore(dataAPI);
 
 export default class ShoppingListApp extends React.Component {
     constructor(props) {
@@ -22,7 +24,11 @@ export default class ShoppingListApp extends React.Component {
         this.state = store.getState();
         store.subscribe(() => {
             this.setState(store.getState());
-        })
+        });
+
+        dataAPI.fetchItems().then(items => {
+            store.dispatch(setItemsList(items));
+        });
     }
 
     render() {

@@ -6,7 +6,7 @@ const fade = (animated, value, cb) => {
         toValue: value,
         duration: 100
     }).start(cb);
-}
+};
 
 class FadeScaleAnimation extends React.Component {
     state = {
@@ -72,7 +72,7 @@ class FadeScaleAnimation extends React.Component {
         };
         if (this.props.children) {
             style.flex = 1;
-        } else if (this.state.unmountingComponent) {
+        } else if (this.state.unmountingComponent && this.measurements) {
             Object.assign(style, {
                 position: 'absolute',
                 left: 0,
