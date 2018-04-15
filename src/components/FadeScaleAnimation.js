@@ -22,7 +22,10 @@ class FadeScaleAnimation extends React.Component {
     }
 
     fadeOut() {
-        fade(this._animated, 0, () => this.setState({unmountingComponent: null}));
+        fade(this._animated, 0, () => {
+            this.measurements = null;
+            this.setState({unmountingComponent: null})
+        });
     }
 
     onViewLayout = event => {
@@ -80,7 +83,7 @@ class FadeScaleAnimation extends React.Component {
         }
 
         return (
-            <Animated.View style={style} onLayout={this.measurements ? undefined : this.onViewLayout}>
+            <Animated.View style={style} onLayout={this.onViewLayout}>
                 {children}
             </Animated.View>
         );
